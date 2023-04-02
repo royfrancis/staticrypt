@@ -296,7 +296,7 @@ function parseCommandLineArguments() {
             alias: "directory",
             type: "string",
             describe: "Name of the directory where the encrypted files will be saved.",
-            default: "encrypted/",
+            default: ".",
         })
         .option("p", {
             alias: "password",
@@ -344,7 +344,7 @@ function parseCommandLineArguments() {
         .option("template-button", {
             type: "string",
             describe: 'Label to use for the decrypt button. Default: "DECRYPT".',
-            default: "DECRYPT",
+            default: "Login",
         })
         .option("template-instructions", {
             type: "string",
@@ -369,17 +369,17 @@ function parseCommandLineArguments() {
         .option("template-title", {
             type: "string",
             describe: "Title for the output HTML page.",
-            default: "Protected Page",
+            default: "NBIS Support",
         })
         .option("template-color-primary", {
             type: "string",
             describe: "Button color.",
-            default: "#4CAF50",
+            default: "#95b540",
         })
         .option("template-color-secondary", {
             type: "string",
             describe: "Background color of the page.",
-            default: "#76b852",
+            default: "#E9F2D1",
         })
 }
 exports.parseCommandLineArguments = parseCommandLineArguments;
