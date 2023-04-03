@@ -10,8 +10,8 @@
 - The command overwrites **index.html** with encrypted version.
 
 ```
-docker pull ghcr.io/royfrancis/staticrypt:gallium-alpine3.17
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:gallium-alpine3.17 staticrypt index.html --short -p mypassword
+docker pull ghcr.io/royfrancis/staticrypt:3.1.0
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:3.1.0 staticrypt index.html --short -p mypassword
 ```
 
 Alternatively, password can be defined inside an **.env** file like this:
@@ -23,13 +23,13 @@ STATICRYPT_PASSWORD="mypassword"
 and then run
 
 ```
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:gallium-alpine3.17 staticrypt index.html --short
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:3.1.0 staticrypt index.html --short
 ```
 
 - For more options, 
 
 ```
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:gallium-alpine3.17 staticrypt --help
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:3.1.0 staticrypt --help
 ```
 
 ### Using NodeJS
