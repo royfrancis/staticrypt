@@ -1,0 +1,45 @@
+name: staticrypt
+on:
+  push:
+    branches:
+      - gh-pages
+env:
+  REGISTRY: ghcr.io
+  ORG: royfrancis
+  IMAGE: staticrypt:3.1.0
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v2
+        with:
+          files: ".staticrypt.json"
+  staticrypt:
+    runs-on: ubuntu-22.04
+    needs: [check]
+    if: needs.check_files.outputs.files_exists != 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Pull image
+        run: docker pull ${{ env.REGISTRY }}/${{ env.ORG }}/${{ env.IMAGE }}
+      - name: Run staticrypt in docker
+        run: |
+          docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) -v $PWD:/home/work ${{ env.REGISTRY }}/${{ env.ORG }}/${{ env.IMAGE }} staticrypt index.html --short
+      - name: Commit files
+        run: |
+          git config --local user.name "Github Action"
+          git add .
+          git commit -m "Encrypted files"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          branch: main
+          force: true
+
