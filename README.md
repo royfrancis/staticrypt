@@ -1,4 +1,4 @@
-# staticrypt [![ci_badge](https://github.com/royfrancis/test-staticrypt/workflows/staticrypt/badge.svg)](https://github.com/royfrancis/test-staticrypt/actions?workflow=staticrypt)
+# staticrypt [![ci_badge](https://github.com/royfrancis/staticrypt/workflows/staticrypt/badge.svg?branch=gh-pages)](https://github.com/royfrancis/staticrypt/actions?workflow=staticrypt)
 
 An example of an encrypted static page.
 
