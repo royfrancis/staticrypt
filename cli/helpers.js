@@ -96,20 +96,24 @@ exports.getValidatedPassword = getValidatedPassword;
 /**
  * Get the config from the config file.
  *
- * @param {string} configArgument
+ * @param {string|null} configPath
  * @returns {{}|object}
  */
-function getConfig(configArgument) {
-    const isUsingconfigFile = configArgument.toLowerCase() !== "false";
-    const configPath = "./" + configArgument;
-
-    if (isUsingconfigFile && fs.existsSync(configPath)) {
+function getConfig(configPath) {
+    if (configPath && fs.existsSync(configPath)) {
         return JSON.parse(fs.readFileSync(configPath, "utf8"));
     }
 
     return {};
 }
 exports.getConfig = getConfig;
+
+function writeConfig(configPath, config) {
+    if (configPath) {
+        fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
+    }
+}
+exports.writeConfig = writeConfig;
 
 /**
  * Get the password from the command arguments or environment variables.
@@ -317,9 +321,9 @@ function parseCommandLineArguments() {
         .option("s", {
             alias: "salt",
             describe:
-                'Set the salt manually. It should be set if you want to use "Remember me" through multiple pages. It ' +
-                "needs to be a 32-character-long hexadecimal string.\nInclude the empty flag to generate a random salt you " +
-                'can use: "statycrypt -s".',
+                'Generate a config file or set the salt manually. Pass a 32-character-long hexadecimal string ' +
+                'to use as salt, or leave empty to generate, display and save to config a random salt. This won\'t' +
+                ' overwrite an existing config file.',
             type: "string",
         })
         // do not give a default option to this parameter - we want to see when the flag is included with no
@@ -346,6 +350,16 @@ function parseCommandLineArguments() {
             describe: 'Label to use for the decrypt button. Default: "DECRYPT".',
             default: "Login",
         })
+        .option("template-color-primary", {
+            type: "string",
+            describe: "Primary color (button...)",
+            default: "#95b540",
+        })
+        .option("template-color-secondary", {
+            type: "string",
+            describe: "Secondary color (page background...)",
+            default: "#E9F2D1",
+        })
         .option("template-instructions", {
             type: "string",
             describe: "Special instructions to display to the user.",
@@ -370,16 +384,6 @@ function parseCommandLineArguments() {
             type: "string",
             describe: "Title for the output HTML page.",
             default: "NBIS Support",
-        })
-        .option("template-color-primary", {
-            type: "string",
-            describe: "Button color.",
-            default: "#95b540",
-        })
-        .option("template-color-secondary", {
-            type: "string",
-            describe: "Background color of the page.",
-            default: "#E9F2D1",
-        })
+        });
 }
 exports.parseCommandLineArguments = parseCommandLineArguments;
