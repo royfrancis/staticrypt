@@ -29,7 +29,7 @@ docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:3.1.0 staticryp
 - For more options, 
 
 ```
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:3.1.0 staticrypt --help
+docker run --rm ghcr.io/royfrancis/staticrypt:3.1.0 staticrypt --help
 ```
 
 ### Using NodeJS
@@ -46,15 +46,15 @@ npm install -g
 - The command overwrites **index.html** with encrypted version.
 
 ```
-staticrypt index.html -p mypassword
+staticrypt index.html -p mypassword --short
 ```
 
-For more options, `staticrypt --help`.
+For more options, `staticrypt --help`
 
 ## Acknowledgements
 
-Built on [StatiCrypt](https://github.com/robinmoisson/staticrypt/).
+Built on [StatiCrypt](https://github.com/robinmoisson/staticrypt/)
 
 ---
 
-2023 | Roy Francis
+2023 • Roy Francis
