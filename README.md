@@ -4,7 +4,7 @@
 
 ## Usage
 
-### Docker
+### Using Docker
 
 - Navigate to the directory with the html file to encrypt
 - The command overwrites **index.html** with encrypted version.
