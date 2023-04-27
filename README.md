@@ -1,4 +1,4 @@
-# StatiCrypt
+# StatiCrypt <span><a href="https://github.com/royfrancis/staticrypt"><img src="staticrypt.png" style="height:40px;vertical-align:middle;"></a></span>
 
 ![preview](preview.png)
 
@@ -79,7 +79,8 @@ For more options, `staticrypt --help`
 
 ## Acknowledgements
 
-Built on [StatiCrypt](https://github.com/robinmoisson/staticrypt/)
+- Built on [StatiCrypt](https://github.com/robinmoisson/staticrypt/)
+- Icon by [Freepik - Flaticon](https://www.flaticon.com)
 
 ---
 
