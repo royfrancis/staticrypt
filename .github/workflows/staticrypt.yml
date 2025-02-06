@@ -6,36 +6,34 @@ on:
 env:
   REGISTRY: ghcr.io
   ORG: royfrancis
-  IMAGE: staticrypt:3.1.0
+  IMAGE: staticrypt:3.5.1.1
   branch: gh-pages
 
 jobs:
   check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-23.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.branch }}
       - name: Check file existence
         id: check_files
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: ".staticrypt.json"
   staticrypt:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-23.04
     needs: [check]
     if: needs.check_files.outputs.files_exists != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.branch }}
-      - name: Pull image
-        run: docker pull ${{ env.REGISTRY }}/${{ env.ORG }}/${{ env.IMAGE }}
       - name: Run staticrypt in docker
         run: |
-          docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) -v $PWD:/home/work ${{ env.REGISTRY }}/${{ env.ORG }}/${{ env.IMAGE }} staticrypt index.html --short
+          docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) -v $PWD:/home/work ${{ env.REGISTRY }}/${{ env.ORG }}/${{ env.IMAGE }} staticrypt index.html -d docs
       - name: Commit files
         run: |
           git config --local user.name "Github Action"
