@@ -53,7 +53,7 @@ In this case, the encrypted html file is written inside the directory **enc**. V
 
 </details>
 
-#### 1.1.1 Batch process
+#### 1.1.2 Batch process
 
 To password protect all HTML pages recursively, create a bash script as shown below named `staticrypt.sh`. Remember to change the **url** and **password**.
 
