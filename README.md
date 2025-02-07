@@ -1,4 +1,4 @@
-# StatiCrypt <span><a href="https://github.com/royfrancis/staticrypt"><img src="staticrypt.png" style="height:40px;vertical-align:middle;"></a></span>
+# StatiCrypt :lock:
 
 ![preview](preview.webp)
 
@@ -127,7 +127,6 @@ For more options, `staticrypt --help`
 ## 2. Acknowledgements
 
 - Built on [StatiCrypt](https://github.com/robinmoisson/staticrypt/)
-- Icon by [Freepik - Flaticon](https://www.flaticon.com)
 
 ---
 
