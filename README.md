@@ -62,6 +62,9 @@ docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest staticry
 
 ```
 docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest staticrypt path/to/folder/* -r -d . -p mylongpassword
+
+# for current directory
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest staticrypt * -r -d . -p mylongpassword
 ```
 
 - For more options, 

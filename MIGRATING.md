@@ -36,4 +36,3 @@ If you do, you need to update your template. To do so:
   - `{remember_me}` => `/*[|template_remember|]*/0`
   - `{passphrase_placeholder}` => `/*[|template_placeholder|]*/0`
   - `{decrypt_button}` => `/*[|template_button|]*/0`
-  
