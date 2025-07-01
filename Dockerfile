@@ -10,6 +10,7 @@ RUN npm install -g
 WORKDIR /home/work
 CMD ["staticrypt", "--version"]
 
-## docker buildx build --platform=linux/arm64,linux/amd64 -t ghcr.io/royfrancis/staticrypt:3.5.3.1 -t ghcr.io/royfrancis/staticrypt:latest --push -f Dockerfile .
-## docker pull ghcr.io/royfrancis/staticrypt:3.5.3.1
-## docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:3.5.3.1 staticrypt index.html -p mylongpassword
+## docker build -t ghcr.io/royfrancis/staticrypt:test .
+## docker buildx build --platform=linux/arm64,linux/amd64 -t ghcr.io/royfrancis/staticrypt:3.5.4.1 -t ghcr.io/royfrancis/staticrypt:latest --push -f Dockerfile .
+## docker pull ghcr.io/royfrancis/staticrypt:3.5.4.1
+## docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:3.5.4.1 staticrypt index.html -p mylongpassword
