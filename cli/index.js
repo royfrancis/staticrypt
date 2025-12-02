@@ -135,6 +135,18 @@ async function runStatiCrypt() {
 
     const isRememberEnabled = namedArgs.remember !== "false";
 
+    const templateSubtitle = namedArgs.templateSubtitle ?? "";
+    let templateSubtitleLink = namedArgs.templateSubtitleLink ?? "";
+    const templatePageTitle = namedArgs.templatePageTitle || namedArgs.templateTitle;
+
+    const hasSubtitleText = typeof templateSubtitle === "string" && templateSubtitle.trim().length > 0;
+    if (templateSubtitleLink && !hasSubtitleText) {
+        console.log(
+            "WARNING: '--template-subtitle-link' was provided without '--template-subtitle'; the link will be ignored."
+        );
+        templateSubtitleLink = "";
+    }
+
     const baseTemplateData = {
         is_remember_enabled: JSON.stringify(isRememberEnabled),
         js_staticrypt: buildStaticryptJS(),
@@ -145,6 +157,9 @@ async function runStatiCrypt() {
         template_instructions: namedArgs.templateInstructions,
         template_placeholder: namedArgs.templatePlaceholder,
         template_remember: namedArgs.templateRemember,
+        template_page_title: templatePageTitle,
+        template_subtitle: templateSubtitle,
+        template_subtitle_link: templateSubtitleLink,
         template_title: namedArgs.templateTitle,
         template_toggle_show: namedArgs.templateToggleShow,
         template_toggle_hide: namedArgs.templateToggleHide,

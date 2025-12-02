@@ -450,12 +450,12 @@ function parseCommandLineArguments() {
             })
             .option("template-color-primary", {
                 type: "string",
-                describe: "Primary color (button...)",
+                describe: "Primary color. Recommended to use a darker color.",
                 default: "#95b540",
             })
             .option("template-color-secondary", {
                 type: "string",
-                describe: "Secondary color (page background...)",
+                describe: "Secondary color. Recommended to use a lighter color.",
                 default: "#E9F2D1",
             })
             .option("template-instructions", {
@@ -480,8 +480,23 @@ function parseCommandLineArguments() {
             })
             .option("template-title", {
                 type: "string",
-                describe: "Title for the output HTML page.",
+                describe: "Title to display on the form.",
                 default: "NBIS Support",
+            })
+            .option("template-page-title", {
+                type: "string",
+                describe: "Document title; defaults to template-title when omitted.",
+                default: null,
+            })
+            .option("template-subtitle", {
+                type: "string",
+                describe: "Subtitle text displayed under the title.",
+                default: null,
+            })
+            .option("template-subtitle-link", {
+                type: "string",
+                describe: "URL applied to the subtitle; subtitle stays plain text if unused.",
+                default: null,
             })
             .option("template-toggle-hide", {
                 type: "string",
