@@ -1,0 +1,12 @@
+FROM node:23-alpine3.20
+LABEL authors="Roy Francis"
+LABEL desc="Encrypts static HTML files and adds a password login"
+LABEL org.opencontainers.image.source="https://github.com/royfrancis/staticrypt"
+
+RUN apk add bash
+COPY . /home/staticrypt
+WORKDIR /home/staticrypt
+RUN npm install -g
+WORKDIR /home/work
+CMD ["staticrypt", "--version"]
+
