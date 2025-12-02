@@ -113,6 +113,7 @@ exports.getConfig = getConfig;
 
 function writeConfig(configPath, config) {
     if (configPath) {
+        createDirectoryStructureForFile(configPath);
         fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
     }
 }

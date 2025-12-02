@@ -58,7 +58,8 @@ async function runStatiCrypt() {
     }
 
     // get config file
-    const configPath = namedArgs.config.toLowerCase() === "false" ? null : "./" + namedArgs.config;
+    const configArg = typeof namedArgs.config === "string" ? namedArgs.config : ".staticrypt.json";
+    const configPath = configArg.toLowerCase() === "false" ? null : pathModule.resolve(process.cwd(), configArg);
     const config = getConfig(configPath);
 
     // if the 's' flag is passed without parameter, generate a salt, display & exit
