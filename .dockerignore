@@ -1,6 +1,38 @@
-example/**
-.git/**
-*.html
+
+# VCS and configs
+.git
+.gitignore
+.github
+
+# Local artifacts
+node_modules
+.DS_Store
+.npmrc
+
+# Build outputs
+encrypted
+decrypted
+site
+docs/.vitepress/cache
+docs/.vitepress/dist
+
+# Documentation & examples
+docs
+example
+preview.webp
+preview-repo.webp
 *.md
+
+# Tests & tooling
+__tests__
+.staticrypt.json
+jest.config.js
+
+# Misc
+*.webp
 *.png
+*.jpg
+*.jpeg
+*.gif
+*.log
 

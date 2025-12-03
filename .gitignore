@@ -1,9 +1,22 @@
 .idea
 .vscode/
+.DS_Store
 node_modules
 .staticrypt.json
 .env
+.npmrc
+
+# Build output
 encrypted/
 !example/encrypted/
 decrypted/
+site/
+docs/.vitepress/cache
+docs/.vitepress/dist
+
+# Tests
 test/
+coverage/
+
+# Logs
+*.log
