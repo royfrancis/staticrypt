@@ -466,7 +466,7 @@ function parseCommandLineArguments() {
             .option("template-error", {
                 type: "string",
                 describe: "Error message to display on entering wrong password.",
-                default: "Bad password!",
+                default: "Incorrect password!",
             })
             .option("template-placeholder", {
                 type: "string",
@@ -481,7 +481,7 @@ function parseCommandLineArguments() {
             .option("template-title", {
                 type: "string",
                 describe: "Title to display on the form.",
-                default: "NBIS Support",
+                default: "Protected page",
             })
             .option("template-page-title", {
                 type: "string",
