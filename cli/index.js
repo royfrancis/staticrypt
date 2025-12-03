@@ -57,6 +57,11 @@ async function runStatiCrypt() {
         }
     }
 
+    const missingInputPath = positionalArguments.find((inputPath) => !fs.existsSync(inputPath));
+    if (missingInputPath) {
+        exitWithError(`Input path "${missingInputPath}" does not exist.`);
+    }
+
     // get config file
     const configArg = typeof namedArgs.config === "string" ? namedArgs.config : ".staticrypt.json";
     const configPath = configArg.toLowerCase() === "false" ? null : pathModule.resolve(process.cwd(), configArg);
