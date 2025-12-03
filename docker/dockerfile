@@ -1,12 +1,24 @@
-FROM node:23-alpine3.20
+ARG NODE_BASE=node:24-alpine3.20
+FROM ${NODE_BASE} AS builder
 LABEL authors="Roy Francis"
 LABEL desc="Encrypts static HTML files and adds a password login"
 LABEL org.opencontainers.image.source="https://github.com/royfrancis/staticrypt"
-
-RUN apk add bash
-COPY . /home/staticrypt
+RUN apk add --no-cache bash && apk upgrade --no-cache
 WORKDIR /home/staticrypt
-RUN npm install -g
-WORKDIR /home/work
-CMD ["staticrypt", "--version"]
 
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY cli/ cli/
+COPY lib/ lib/
+COPY scripts/ scripts/
+
+FROM ${NODE_BASE}
+RUN apk add --no-cache bash && apk upgrade --no-cache
+WORKDIR /opt/staticrypt
+COPY --from=builder /home/staticrypt .
+RUN chmod +x cli/index.js && ln -s /opt/staticrypt/cli/index.js /usr/local/bin/staticrypt
+
+WORKDIR /home/work
+ENTRYPOINT ["staticrypt"]
+CMD ["--version"]
