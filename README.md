@@ -1,4 +1,4 @@
-# :lock: StatiCrypt [![docs build status](https://github.com/royfrancis/staticrypt/workflows/docs/badge.svg)](https://github.com/nbisweden/royfrancis/staticrypt/actions?workflow=docs) [![docker build status](https://github.com/royfrancis/staticrypt/workflows/docker/badge.svg)](https://github.com/nbisweden/royfrancis/staticrypt/actions?workflow=docker)
+# :lock: StatiCrypt [![docs build status](https://github.com/royfrancis/staticrypt/workflows/docs/badge.svg)](https://github.com/royfrancis/staticrypt/actions?workflow=docs) [![docker build status](https://github.com/royfrancis/staticrypt/workflows/docker/badge.svg)](https://github.com/royfrancis/staticrypt/pkgs/container/staticrypt)
 
 ![preview](docs/public/images/preview.webp)
 
