@@ -403,6 +403,12 @@ function parseCommandLineArguments() {
                 describe: "Whether to recursively encrypt the input directory.",
                 default: false,
             })
+            .option("quiet", {
+                alias: "q",
+                type: "boolean",
+                describe: "Suppress the final success summary message.",
+                default: false,
+            })
             .option("remember", {
                 describe:
                     'Integer: expiration in days of the "Remember me" checkbox that will save the (salted + hashed) password ' +

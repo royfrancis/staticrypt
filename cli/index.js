@@ -171,10 +171,14 @@ async function runStatiCrypt() {
     };
 
     // encode all the files
+    const encryptionTasks = [];
+    let encryptedFileCount = 0;
+
     positionalArguments.forEach((path) => {
         recursivelyApplyCallbackToHtmlFiles(
             (fullPath, fullRootDirectory) => {
-                encodeAndGenerateFile(
+                encryptedFileCount += 1;
+                const task = encodeAndGenerateFile(
                     fullPath,
                     fullRootDirectory,
                     hashedPassword,
@@ -183,11 +187,20 @@ async function runStatiCrypt() {
                     isRememberEnabled,
                     namedArgs
                 );
+                encryptionTasks.push(task);
             },
             path,
             namedArgs.directory
         );
     });
+
+    await Promise.all(encryptionTasks);
+
+    if (!namedArgs.quiet) {
+        const exportDirectory = pathModule.resolve(process.cwd(), namedArgs.directory);
+        const fileLabel = encryptedFileCount === 1 ? "file" : "files";
+        console.log(`Encrypted ${encryptedFileCount} ${fileLabel} to ${exportDirectory}`);
+    }
 }
 
 async function decodeAndGenerateFile(path, fullRootDirectory, hashedPassword, outputDirectory) {
