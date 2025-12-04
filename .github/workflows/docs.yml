@@ -1,0 +1,65 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - bootstrap
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Encrypt docs example with StatiCrypt
+        env:
+          REGISTRY: ghcr.io
+          ORG: royfrancis
+          IMAGE: staticrypt:3.5.4.1
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/home/work \
+            ${{ env.REGISTRY }}/${{ env.ORG }}/${{ env.IMAGE }} \
+            docs/public/example.html \
+            --directory docs/public \
+            -p mylongpassword \
+            --config false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build VitePress site
+        run: npm run docs:build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
