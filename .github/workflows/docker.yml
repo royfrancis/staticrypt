@@ -2,8 +2,6 @@ name: docker
 
 on:
   push:
-    branches:
-      - bootstrap
     tags:
       - "*"
   workflow_dispatch:
@@ -37,7 +35,6 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
