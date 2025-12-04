@@ -37,7 +37,7 @@ staticrypt example/index.html --password "super-long-password"
 
 ![](/images/preview.webp)
 
-StatiCrypt injects a polished password prompt (`lib/password_template.html`) plus an inline copy of the crypto runtime. Custom templates are supported for brand-conscious deployments. To see an encrypted page in action, check out the [demo page](/example.html). Use password `mylongpassword`.
+StatiCrypt injects a polished password prompt (`lib/password_template.html`) plus an inline copy of the crypto runtime. Custom templates are supported for brand-conscious deployments. To see an encrypted page in action, check out the [demo page](./example.html). Use password `mylongpassword`.
 
 ## User Guide & CLI Reference
 
