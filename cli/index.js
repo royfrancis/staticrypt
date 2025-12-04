@@ -116,16 +116,39 @@ async function runStatiCrypt() {
         const isOutputDirectoryDefault =
             namedArgs.directory === OUTPUT_DIRECTORY_DEFAULT_PATH && !isOptionSetByUser("d", yargs);
         const outputDirectory = isOutputDirectoryDefault ? "decrypted" : namedArgs.directory;
+        const decryptTasks = [];
+        let decryptedFileCount = 0;
+        let decryptedOverwroteInputs = false;
 
         positionalArguments.forEach((path) => {
             recursivelyApplyCallbackToHtmlFiles(
                 (fullPath, fullRootDirectory) => {
-                    decodeAndGenerateFile(fullPath, fullRootDirectory, hashedPassword, outputDirectory);
+                    decryptedFileCount += 1;
+                    const task = decodeAndGenerateFile(fullPath, fullRootDirectory, hashedPassword, outputDirectory).then(
+                        (result) => {
+                            if (result?.overwroteSource) {
+                                decryptedOverwroteInputs = true;
+                            }
+                        }
+                    );
+                    decryptTasks.push(task);
                 },
                 path,
                 namedArgs.directory
             );
         });
+
+        await Promise.all(decryptTasks);
+
+        if (!namedArgs.quiet) {
+            const resolvedOutputDir = pathModule.resolve(process.cwd(), outputDirectory);
+            const finalOutputDir = fs.realpathSync(resolvedOutputDir);
+            const fileLabel = decryptedFileCount === 1 ? "file" : "files";
+            const destinationLabel = decryptedOverwroteInputs
+                ? `in-place (overwriting originals) at ${finalOutputDir}`
+                : `to ${finalOutputDir}`;
+            console.log(`Decrypted ${decryptedFileCount} ${fileLabel} ${destinationLabel}`);
+        }
 
         return;
     }
@@ -173,6 +196,7 @@ async function runStatiCrypt() {
     // encode all the files
     const encryptionTasks = [];
     let encryptedFileCount = 0;
+    let overwroteInputs = false;
 
     positionalArguments.forEach((path) => {
         recursivelyApplyCallbackToHtmlFiles(
@@ -186,7 +210,11 @@ async function runStatiCrypt() {
                     baseTemplateData,
                     isRememberEnabled,
                     namedArgs
-                );
+                ).then((result) => {
+                    if (result?.overwroteSource) {
+                        overwroteInputs = true;
+                    }
+                });
                 encryptionTasks.push(task);
             },
             path,
@@ -199,7 +227,10 @@ async function runStatiCrypt() {
     if (!namedArgs.quiet) {
         const exportDirectory = pathModule.resolve(process.cwd(), namedArgs.directory);
         const fileLabel = encryptedFileCount === 1 ? "file" : "files";
-        console.log(`Encrypted ${encryptedFileCount} ${fileLabel} to ${exportDirectory}`);
+        const destinationLabel = overwroteInputs
+            ? `in-place (overwriting originals) at ${exportDirectory}`
+            : `to ${exportDirectory}`;
+        console.log(`Encrypted ${encryptedFileCount} ${fileLabel} ${destinationLabel}`);
     }
 }
 
@@ -225,6 +256,10 @@ async function decodeAndGenerateFile(path, fullRootDirectory, hashedPassword, ou
     const outputFilepath = getFullOutputPath(path, fullRootDirectory, outputDirectory);
 
     writeFile(outputFilepath, decoded);
+
+    const resolvedOutputFilepath = fs.realpathSync(outputFilepath);
+    const resolvedSourcePath = fs.realpathSync(path);
+    return { overwroteSource: resolvedOutputFilepath === resolvedSourcePath };
 }
 
 async function encodeAndGenerateFile(
@@ -261,6 +296,10 @@ async function encodeAndGenerateFile(
     const outputFilepath = namedArgs.directory + "/" + relativePath;
 
     genFile(templateData, outputFilepath, namedArgs.template);
+
+    const resolvedOutputFilepath = fs.realpathSync(pathModule.resolve(process.cwd(), outputFilepath));
+    const resolvedSourcePath = fs.realpathSync(path);
+    return { overwroteSource: resolvedOutputFilepath === resolvedSourcePath };
 }
 
 runStatiCrypt();

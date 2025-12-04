@@ -121,6 +121,151 @@ describe("cli arguments", () => {
         expect(encryptedContents).toContain("Remember forever");
     });
 
+    test("template customization flags are reflected in generated HTML", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "custom.html");
+        const outputDir = path.join(workspace, "customized-output");
+
+        const result = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                outputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+                "--template-title",
+                "Confidential Vault",
+                "--template-instructions",
+                "<strong>Handle with care.</strong>",
+                "--template-button",
+                "Unlock Secrets",
+                "--template-color-primary",
+                "#123456",
+                "--template-color-secondary",
+                "#654321",
+                "--template-placeholder",
+                "Passphrase please",
+                "--template-toggle-show",
+                "Show phrase",
+                "--template-toggle-hide",
+                "Hide phrase",
+                "--template-subtitle",
+                "Need help?",
+                "--template-subtitle-link",
+                "https://example.test/help",
+            ],
+            { cwd: workspace }
+        );
+
+        expect(result.status).toBe(0);
+        const html = fs.readFileSync(path.join(outputDir, "custom.html"), "utf8");
+        expect(html).toContain("Confidential Vault");
+        expect(html).toContain("<strong>Handle with care.</strong>");
+        expect(html).toContain("Unlock Secrets");
+        expect(html).toContain("Passphrase please");
+        expect(html).toContain("Show phrase");
+        expect(html).toContain("Hide phrase");
+        expect(html).toContain('templateSubtitle = "Need help?"');
+        expect(html).toContain('templateSubtitleLink = "https://example.test/help"');
+        expect(html).toContain("#123456");
+        expect(html).toContain("#654321");
+    });
+
+    test("template subtitle link alone triggers warning and is ignored", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "warning.html");
+        const outputDir = path.join(workspace, "warning-output");
+        const lonelyLink = "https://example.test/alone";
+
+        const result = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                outputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+                "--template-subtitle-link",
+                lonelyLink,
+            ],
+            { cwd: workspace }
+        );
+
+        expect(result.status).toBe(0);
+        expect(result.stdout).toContain(
+            "WARNING: '--template-subtitle-link' was provided without '--template-subtitle'; the link will be ignored."
+        );
+        const html = fs.readFileSync(path.join(outputDir, "warning.html"), "utf8");
+        expect(html).not.toContain(lonelyLink);
+    });
+
+    test("quiet flag suppresses completion summary", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "quiet.html");
+        const relativeOutputDir = "quiet-out";
+
+        const defaultResult = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                relativeOutputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+            ],
+            { cwd: workspace }
+        );
+
+        expect(defaultResult.status).toBe(0);
+        const expectedSummaryPath = fs.realpathSync(path.join(workspace, relativeOutputDir));
+        expect(defaultResult.stdout).toContain(`Encrypted 1 file to ${expectedSummaryPath}`);
+
+        const quietResult = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                relativeOutputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+                "--quiet",
+            ],
+            { cwd: workspace }
+        );
+
+        expect(quietResult.status).toBe(0);
+        expect(quietResult.stdout.trim()).toBe("");
+    });
+
+    test("in-place encryption message clarifies overwrites", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "inplace.html");
+
+        const result = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                ".",
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+            ],
+            { cwd: workspace }
+        );
+
+        expect(result.status).toBe(0);
+        const exportDirectory = fs.realpathSync(workspace);
+        expect(result.stdout).toContain(
+            `Encrypted 1 file in-place (overwriting originals) at ${exportDirectory}`
+        );
+    });
+
     test("recursive encryption processes nested directories and copies other files", () => {
         const workspace = makeTempDir();
         const inputRoot = path.join(workspace, "input");
@@ -186,6 +331,8 @@ describe("cli arguments", () => {
         ], { cwd: workspace });
 
         expect(decryptResult.status).toBe(0);
+        const expectedSummaryPath = fs.realpathSync(decryptedDir);
+        expect(decryptResult.stdout).toContain(`Decrypted 1 file to ${expectedSummaryPath}`);
         const decryptedFilePath = path.join(decryptedDir, "source.html");
         expect(fs.readFileSync(decryptedFilePath, "utf8")).toBe(originalHtml);
     });
