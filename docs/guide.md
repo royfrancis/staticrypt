@@ -61,14 +61,10 @@ npm run docs:build
 
 ### Using GitHub Actions
 
-GA encrypts all HTML files, commits the changes and pushes the changes back.
+Encrypting static websites can be automated using GitHub Actions. For examples, see 
 
-See [gh-pages branch](https://github.com/royfrancis/staticrypt/tree/gh-pages) for an example.
-
-- Copy the github action and set **push:branches** and **env:branch** as needed
-- Input password into **.env** file OR create an environment variable `STATICRYPT_PASSWORD`
-- Add environment variable `TOKEN` to push changes back
-- Optionally, add a badge for the job
+- [Arbitrary HTML page](https://github.com/royfrancis/staticrypt-ga)
+- [Quarto website](https://github.com/royfrancis/staticrypt-quarto-ga)
 
 ## Usage
 
