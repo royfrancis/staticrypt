@@ -31,8 +31,8 @@ StatiCrypt bundles your HTML and assets into a single password-protected page. U
 ## Quick Encrypt Example
 
 ```bash
-# Encrypt example/index.html into ./encrypted
-staticrypt example/index.html --password "super-long-password"
+# Encrypt index.html into ./encrypted
+staticrypt index.html --password "super-long-password"
 ```
 
 ![](/images/preview.webp)
