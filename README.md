@@ -12,10 +12,10 @@ Using docker:
 
 ```bash
 # exports to a directory named 'encrypted' inside the current directory
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest staticrypt index.html -p mylongpassword
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -p mylongpassword
 
 # to overwrite the original file
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest staticrypt index.html -d . -p mylongpassword
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -d . -p mylongpassword
 ```
 
 Using nodejs npm:

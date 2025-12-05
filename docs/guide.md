@@ -15,7 +15,7 @@ docker run --rm ghcr.io/royfrancis/staticrypt:latest
 - Navigate to the directory with the html file to encrypt and run as below. This outputs **index.html** into a folder named 'encrypted' inside the current directory.
 
 ```
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest staticrypt index.html -p mylongpassword
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -p mylongpassword
 ```
 
 ### Using NodeJS

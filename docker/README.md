@@ -26,5 +26,5 @@ Pull and run container:
 
 ```
 docker pull ghcr.io/royfrancis/staticrypt:latest
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest staticrypt example/index.html -p mylongpassword
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest example/index.html -p mylongpassword
 ```
