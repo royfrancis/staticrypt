@@ -187,6 +187,8 @@ async function runStatiCrypt() {
         typeof namedArgs.templateImageHeight === "string" ? namedArgs.templateImageHeight.trim() : "";
     const rawTemplateImageWidth =
         typeof namedArgs.templateImageWidth === "string" ? namedArgs.templateImageWidth.trim() : "";
+    const rawTemplateImageFocus =
+        typeof namedArgs.templateImageFocus === "string" ? namedArgs.templateImageFocus.trim() : "";
     const templateImageIsPresent = templateImage.length > 0;
     const rawTemplateImagePosition =
         typeof namedArgs.templateImagePosition === "string" ? namedArgs.templateImagePosition.trim() : "";
@@ -207,6 +209,7 @@ async function runStatiCrypt() {
             : { height: "60px", width: "100%" };
     const templateImageHeight = rawTemplateImageHeight || defaultImageDimensions.height;
     const templateImageWidth = rawTemplateImageWidth || defaultImageDimensions.width;
+    const templateImageFocus = rawTemplateImageFocus || "center";
 
     const hasSubtitleText = typeof templateSubtitle === "string" && templateSubtitle.trim().length > 0;
     if (templateSubtitleLink && !hasSubtitleText) {
@@ -236,6 +239,7 @@ async function runStatiCrypt() {
         template_image_position: templateImagePosition,
         template_image_height: templateImageHeight,
         template_image_width: templateImageWidth,
+        template_image_cover_position: templateImageFocus,
         template_image_is_present: templateImageIsPresent,
     };
 

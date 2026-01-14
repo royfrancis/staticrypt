@@ -36,6 +36,7 @@ This section details all available command-line flags for the StatiCrypt tool.
 | `--template-image-position <top \| left>` | Choose whether the image sits above the card or to the left (default `top`). |
 | `--template-image-height <css>` | Overrides the computed image height (`60px` for top, `100%` for left by default). |
 | `--template-image-width <css>` | Overrides the computed image width (`100%` for top, `120px` for left by default). |
+| `--template-image-focus <css>` | Sets the CSS `object-position` used to frame the image within its box (default `center`). |
 | `--template-error <text>` | Alert shown when the passphrase is wrong.
 | `--template-instructions <text>` | Paragraph displayed above the password field.
 | `--template-placeholder <text>` | Placeholder text inside the password input.

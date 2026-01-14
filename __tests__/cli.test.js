@@ -168,6 +168,8 @@ describe("cli arguments", () => {
                 "85%",
                 "--template-image-width",
                 "360px",
+                "--template-image-focus",
+                "top left",
             ],
             { cwd: workspace }
         );
@@ -189,6 +191,7 @@ describe("cli arguments", () => {
         expect(html).toContain(`data:image/svg+xml;base64,${expectedInlineSvgBase64}`);
         expect(html).toMatch(/--staticrypt-image-height[^;]+85%/);
         expect(html).toMatch(/--staticrypt-image-width[^;]+360px/);
+        expect(html).toMatch(/--staticrypt-image-cover-position[^;]+top left/);
     });
 
     test("remote template image values are preserved when file is absent", () => {
@@ -246,6 +249,7 @@ describe("cli arguments", () => {
         expect(topHtml).toContain('data-image-position="top"');
         expect(topHtml).toMatch(/--staticrypt-image-height[^;]+60px/);
         expect(topHtml).toMatch(/--staticrypt-image-width[^;]+100%/);
+        expect(topHtml).toMatch(/--staticrypt-image-cover-position[^;]+center/);
 
         const leftOutputDir = path.join(workspace, "left-output");
         const leftResult = runStaticrypt(
@@ -269,6 +273,7 @@ describe("cli arguments", () => {
         expect(leftHtml).toContain('data-image-position="left"');
         expect(leftHtml).toMatch(/--staticrypt-image-height[^;]+100%/);
         expect(leftHtml).toMatch(/--staticrypt-image-width[^;]+120px/);
+        expect(leftHtml).toMatch(/--staticrypt-image-cover-position[^;]+center/);
     });
 
     test("template subtitle link alone triggers warning and is ignored", () => {

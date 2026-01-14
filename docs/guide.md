@@ -229,7 +229,7 @@ staticrypt index.html -p mylongpassword --template-subtitle "<svg width='30' hei
 
 **Hero / Brand Image**
 
-Add a hero or brand image to the login card. `--template-image` accepts a local path or absolute URL. Combine it with `--template-image-position`, `--template-image-height`, and `--template-image-width` to fine-tune the layout. `--template-image-position` can take options 'top' or 'left'. Height and width if not set defaults to (top: 60px × 100%, left: 100% × 120px).
+Add a hero or brand image to the login card. `--template-image` accepts a local path or absolute URL. Combine it with `--template-image-position`, `--template-image-height`, `--template-image-width`, and `--template-image-focus` to fine-tune the layout. `--template-image-position` can take options 'top' or 'left'. Height and width if not set defaults to (top: 60px × 100%, left: 100% × 120px). `--template-image-focus` tweaks the CSS `object-position` (default `center`) so you can shift the crop focus.
 
 ```bash
 # Default image on top
@@ -248,16 +248,17 @@ staticrypt index.html -p mylongpassword \
 ![](/images/image-left.webp)
 
 ```bash
-# Using a remote image URL and custom width
+# Using a remote image URL, custom width and focus
 staticrypt index.html -p mylongpassword \
     --template-image https://images.pexels.com/photos/4716089/pexels-photo-4716089.jpeg \
     --template-image-position left \
-    --template-image-width 200px
+    --template-image-width 200px \
+    --template-image-focus "top left"
 ```
 
 ![](/images/image-url.webp)
 
-The image element is constrained with `object-fit: cover`, so it fully fills the allocated box without distorting the original aspect ratio.
+The image element is constrained with `object-fit: cover`, so it fully fills the allocated box without distorting the original aspect ratio. Use `--template-image-focus` to shift the focal point (e.g., `center top`, `75% 25%`, `right bottom`).
 
 ::: warning
 

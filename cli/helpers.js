@@ -486,6 +486,11 @@ function parseCommandLineArguments() {
                 describe: "CSS width for the template image area (auto-applies defaults per position).",
                 default: null,
             })
+            .option("template-image-focus", {
+                type: "string",
+                describe: "CSS object-position value to control how the image is framed inside its box.",
+                default: "center",
+            })
             .option("template-instructions", {
                 type: "string",
                 describe: "Special instructions to display to the user.",
