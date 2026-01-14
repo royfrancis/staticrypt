@@ -1,4 +1,4 @@
-name: docker
+name: ghcr
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker:
+  ghcr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
