@@ -45,5 +45,7 @@ This section details all available command-line flags for the StatiCrypt tool.
 | `--template-page-title <text>` | Document `<title>`; falls back to template title.
 | `--template-subtitle <text>` | Optional subtitle under the title.
 | `--template-subtitle-link <url>` | Link applied to the subtitle (ignored when subtitle text is empty).
+| `--template-footer <text>` | Small footer text rendered below the form.
+| `--template-footer-link <url>` | Link applied to the footer (ignored when footer text is empty).
 | `--template-toggle-show <text>` | Accessible label for the "show password" action.
 | `--template-toggle-hide <text>` | Accessible label for the "hide password" action.

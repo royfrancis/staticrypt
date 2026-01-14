@@ -159,9 +159,9 @@ Change the error message shown on incorrect password
 staticrypt index.html -p mylongpassword --template-error 'Bad password! Please try again.'
 ```
 
-**Password placeholder**
-
 ![](/images/bad-password.webp)
+
+**Password placeholder**
 
 Change placeholder text for password input
 
@@ -227,6 +227,20 @@ staticrypt index.html -p mylongpassword --template-subtitle "<svg width='30' hei
 
 ![](/images/github.webp)
 
+**Footer Text**
+
+Add a compact footer with optional link below the form. This is great for "About" blurbs, repository links, or attribution notes.
+
+```bash
+staticrypt index.html -p mylongpassword \
+    --template-footer "Made with ♥" \
+    --template-footer-link https://github.com/royfrancis/staticrypt
+```
+
+![](/images/image-left.webp)
+
+If you omit `--template-footer-link`, the text stays plain. Passing only the link prints a warning and ignores the URL until a footer message is supplied.
+
 **Hero / Brand Image**
 
 Add a hero or brand image to the login card. `--template-image` accepts a local path or absolute URL. Combine it with `--template-image-position`, `--template-image-height`, `--template-image-width`, and `--template-image-focus` to fine-tune the layout. `--template-image-position` can take options 'top' or 'left'. Height and width if not set defaults to (top: 60px × 100%, left: 100% × 120px). `--template-image-focus` tweaks the CSS `object-position` (default `center`) so you can shift the crop focus.
@@ -248,12 +262,14 @@ staticrypt index.html -p mylongpassword \
 ![](/images/image-left.webp)
 
 ```bash
-# Using a remote image URL, custom width and focus
+# Using a remote image URL, custom width, focus and footer
 staticrypt index.html -p mylongpassword \
     --template-image https://images.pexels.com/photos/4716089/pexels-photo-4716089.jpeg \
     --template-image-position left \
     --template-image-width 200px \
-    --template-image-focus "top left"
+    --template-image-focus "top left" \
+    --template-footer "Made with ♥" \
+    --template-footer-link https://github.com/royfrancis/staticrypt
 ```
 
 ![](/images/image-url.webp)
