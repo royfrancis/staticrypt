@@ -37,6 +37,21 @@ const {
     getFullOutputPath,
 } = require("./helpers.js");
 
+const TEMPLATE_IMAGE_MIME_TYPES = {
+    ".apng": "image/apng",
+    ".avif": "image/avif",
+    ".bmp": "image/bmp",
+    ".gif": "image/gif",
+    ".ico": "image/x-icon",
+    ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
+    ".png": "image/png",
+    ".svg": "image/svg+xml",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+    ".webp": "image/webp",
+};
+
 // parse arguments
 const yargs = parseCommandLineArguments();
 const namedArgs = yargs.argv;
@@ -166,6 +181,32 @@ async function runStatiCrypt() {
     const templateSubtitle = namedArgs.templateSubtitle ?? "";
     let templateSubtitleLink = namedArgs.templateSubtitleLink ?? "";
     const templatePageTitle = namedArgs.templatePageTitle || namedArgs.templateTitle;
+    const rawTemplateImage = typeof namedArgs.templateImage === "string" ? namedArgs.templateImage.trim() : "";
+    const templateImage = resolveTemplateImageSource(rawTemplateImage);
+    const rawTemplateImageHeight =
+        typeof namedArgs.templateImageHeight === "string" ? namedArgs.templateImageHeight.trim() : "";
+    const rawTemplateImageWidth =
+        typeof namedArgs.templateImageWidth === "string" ? namedArgs.templateImageWidth.trim() : "";
+    const templateImageIsPresent = templateImage.length > 0;
+    const rawTemplateImagePosition =
+        typeof namedArgs.templateImagePosition === "string" ? namedArgs.templateImagePosition.trim() : "";
+    const validImagePositions = ["top", "left"];
+    let templateImagePosition = rawTemplateImagePosition.toLowerCase() || "top";
+    if (!validImagePositions.includes(templateImagePosition)) {
+        if (rawTemplateImagePosition) {
+            console.log(
+                "WARNING: '--template-image-position' must be either 'top' or 'left'; falling back to 'top'."
+            );
+        }
+        templateImagePosition = "top";
+    }
+
+    const defaultImageDimensions =
+        templateImagePosition === "left"
+            ? { height: "100%", width: "120px" }
+            : { height: "60px", width: "100%" };
+    const templateImageHeight = rawTemplateImageHeight || defaultImageDimensions.height;
+    const templateImageWidth = rawTemplateImageWidth || defaultImageDimensions.width;
 
     const hasSubtitleText = typeof templateSubtitle === "string" && templateSubtitle.trim().length > 0;
     if (templateSubtitleLink && !hasSubtitleText) {
@@ -191,6 +232,11 @@ async function runStatiCrypt() {
         template_title: namedArgs.templateTitle,
         template_toggle_show: namedArgs.templateToggleShow,
         template_toggle_hide: namedArgs.templateToggleHide,
+        template_image: templateImage,
+        template_image_position: templateImagePosition,
+        template_image_height: templateImageHeight,
+        template_image_width: templateImageWidth,
+        template_image_is_present: templateImageIsPresent,
     };
 
     // encode all the files
@@ -303,3 +349,43 @@ async function encodeAndGenerateFile(
 }
 
 runStatiCrypt();
+
+function resolveTemplateImageSource(imageInput) {
+    if (!imageInput) {
+        return "";
+    }
+
+    const normalizedInput = imageInput.trim();
+    if (!normalizedInput) {
+        return "";
+    }
+
+    const isDataUri = normalizedInput.startsWith("data:");
+    const isHttpUrl = /^https?:\/\//i.test(normalizedInput);
+    const isProtocolRelative = normalizedInput.startsWith("//");
+
+    if (isDataUri || isHttpUrl || isProtocolRelative) {
+        return normalizedInput;
+    }
+
+    try {
+        const resolvedPath = pathModule.resolve(process.cwd(), normalizedInput);
+        if (!fs.existsSync(resolvedPath)) {
+            return normalizedInput;
+        }
+
+        const stats = fs.statSync(resolvedPath);
+        if (!stats.isFile()) {
+            return normalizedInput;
+        }
+
+        const fileBuffer = fs.readFileSync(resolvedPath);
+        const encodedFile = fileBuffer.toString("base64");
+        const extension = pathModule.extname(resolvedPath).toLowerCase();
+        const mimeType = TEMPLATE_IMAGE_MIME_TYPES[extension] || "application/octet-stream";
+        return `data:${mimeType};base64,${encodedFile}`;
+    } catch (error) {
+        console.log(`WARNING: Failed to inline template image at "${imageInput}": ${error.message}`);
+        return normalizedInput;
+    }
+}

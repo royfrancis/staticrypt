@@ -125,6 +125,11 @@ describe("cli arguments", () => {
         const workspace = makeTempDir();
         const inputFile = writeSampleHtml(workspace, "custom.html");
         const outputDir = path.join(workspace, "customized-output");
+        const inlineSvgPath = path.join(workspace, "inline.svg");
+        const inlineSvgContent =
+            "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='10' height='10' fill='red'/></svg>";
+        fs.writeFileSync(inlineSvgPath, inlineSvgContent, "utf8");
+        const expectedInlineSvgBase64 = Buffer.from(inlineSvgContent).toString("base64");
 
         const result = runStaticrypt(
             [
@@ -155,6 +160,14 @@ describe("cli arguments", () => {
                 "Need help?",
                 "--template-subtitle-link",
                 "https://example.test/help",
+                "--template-image",
+                inlineSvgPath,
+                "--template-image-position",
+                "left",
+                "--template-image-height",
+                "85%",
+                "--template-image-width",
+                "360px",
             ],
             { cwd: workspace }
         );
@@ -171,6 +184,91 @@ describe("cli arguments", () => {
         expect(html).toContain('templateSubtitleLink = "https://example.test/help"');
         expect(html).toContain("#123456");
         expect(html).toContain("#654321");
+        expect(html).toContain('data-image-position="left"');
+        expect(html).toContain('data-has-image="true"');
+        expect(html).toContain(`data:image/svg+xml;base64,${expectedInlineSvgBase64}`);
+        expect(html).toMatch(/--staticrypt-image-height[^;]+85%/);
+        expect(html).toMatch(/--staticrypt-image-width[^;]+360px/);
+    });
+
+    test("remote template image values are preserved when file is absent", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "remote.html");
+        const outputDir = path.join(workspace, "remote-output");
+        const remoteImageUrl = "https://example.test/media/hero.png";
+
+        const result = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                outputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+                "--template-image",
+                remoteImageUrl,
+            ],
+            { cwd: workspace }
+        );
+
+        expect(result.status).toBe(0);
+        const html = fs.readFileSync(path.join(outputDir, "remote.html"), "utf8");
+        expect(html).toContain(remoteImageUrl);
+        expect(html).toContain('data-has-image="true"');
+    });
+
+    test("template image defaults adjust height and width per position", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "defaults.html");
+        const inlineSvgPath = path.join(workspace, "defaults.svg");
+        const inlineSvgContent =
+            "<svg xmlns='http://www.w3.org/2000/svg' width='5' height='5'><rect width='5' height='5' fill='blue'/></svg>";
+        fs.writeFileSync(inlineSvgPath, inlineSvgContent, "utf8");
+
+        const topOutputDir = path.join(workspace, "top-output");
+        const topResult = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                topOutputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+                "--template-image",
+                inlineSvgPath,
+            ],
+            { cwd: workspace }
+        );
+        expect(topResult.status).toBe(0);
+        const topHtml = fs.readFileSync(path.join(topOutputDir, "defaults.html"), "utf8");
+        expect(topHtml).toContain('data-image-position="top"');
+        expect(topHtml).toMatch(/--staticrypt-image-height[^;]+60px/);
+        expect(topHtml).toMatch(/--staticrypt-image-width[^;]+100%/);
+
+        const leftOutputDir = path.join(workspace, "left-output");
+        const leftResult = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                leftOutputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+                "--template-image",
+                inlineSvgPath,
+                "--template-image-position",
+                "left",
+            ],
+            { cwd: workspace }
+        );
+        expect(leftResult.status).toBe(0);
+        const leftHtml = fs.readFileSync(path.join(leftOutputDir, "defaults.html"), "utf8");
+        expect(leftHtml).toContain('data-image-position="left"');
+        expect(leftHtml).toMatch(/--staticrypt-image-height[^;]+100%/);
+        expect(leftHtml).toMatch(/--staticrypt-image-width[^;]+120px/);
     });
 
     test("template subtitle link alone triggers warning and is ignored", () => {

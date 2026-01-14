@@ -41,6 +41,9 @@ staticrypt path/to/folder/* -d path/to/folder -r -p mylongpassword
 
 ## Updating
 
+- `npm install -g` to update the global package
+- Evaluate that all tests pass: `npm test`
+- To preview documentation; `npm install` then `npm run docs:dev`
 - Update version in `package.json`
 - Update version in `docker/README.md`
 - Check env versions are same in conda and docker

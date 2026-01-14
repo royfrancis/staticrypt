@@ -464,6 +464,26 @@ function parseCommandLineArguments() {
                 describe: "Secondary color. Recommended to use a lighter color.",
                 default: "#E9F2D1",
             })
+            .option("template-image", {
+                type: "string",
+                describe: "Path or URL to an image displayed alongside the login form.",
+                default: "",
+            })
+            .option("template-image-position", {
+                type: "string",
+                describe: "Placement for the template image; choose 'top' or 'left'.",
+                default: "top",
+            })
+            .option("template-image-height", {
+                type: "string",
+                describe: "CSS height for the template image area (auto-applies defaults per position).",
+                default: null,
+            })
+            .option("template-image-width", {
+                type: "string",
+                describe: "CSS width for the template image area (auto-applies defaults per position).",
+                default: null,
+            })
             .option("template-instructions", {
                 type: "string",
                 describe: "Special instructions to display to the user.",

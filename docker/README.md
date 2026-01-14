@@ -15,7 +15,7 @@ Build and push multi-arch image to GHCR:
 docker buildx create --name staticrypt-builder --bootstrap --use
 docker buildx build \
   --platform=linux/arm64,linux/amd64 \
-  -t ghcr.io/royfrancis/staticrypt:3.5.4 \
+  -t ghcr.io/royfrancis/staticrypt:3.5.5 \
   -t ghcr.io/royfrancis/staticrypt:latest \
   --push \
   -f docker/dockerfile .

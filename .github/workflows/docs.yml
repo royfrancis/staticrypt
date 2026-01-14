@@ -26,7 +26,7 @@ jobs:
         env:
           REGISTRY: ghcr.io
           ORG: royfrancis
-          IMAGE: staticrypt:3.5.4
+          IMAGE: staticrypt:3.5.5
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/home/work \
