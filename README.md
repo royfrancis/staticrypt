@@ -1,6 +1,6 @@
 # :lock: StatiCrypt 
 
-[![docs build status](https://github.com/royfrancis/staticrypt/workflows/docs/badge.svg)](https://github.com/royfrancis/staticrypt/actions?workflow=docs) [![ghcr build status](https://github.com/royfrancis/staticrypt/actions/workflows/ghcr.yml/badge.svg)](https://github.com/royfrancis/staticrypt/actions/workflows/ghcr.yml) [![dockerhub build status](https://github.com/royfrancis/staticrypt/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/royfrancis/staticrypt/actions/workflows/dockerhub.yml)
+[![docs build status](https://github.com/royfrancis/staticrypt/workflows/docs/badge.svg)](https://github.com/royfrancis/staticrypt/actions?workflow=docs) [![ghcr build status](https://github.com/royfrancis/staticrypt/actions/workflows/ghcr.yml/badge.svg)](https://github.com/royfrancis/staticrypt/pkgs/container/staticrypt) [![dockerhub build status](https://github.com/royfrancis/staticrypt/actions/workflows/dockerhub.yml/badge.svg)](https://hub.docker.com/repository/docker/royfrancis/staticrypt)
 
 ![preview](docs/public/images/preview.webp)
 
@@ -16,6 +16,9 @@ docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.ht
 
 # to overwrite the original file
 docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -d . -p mylongpassword
+
+# recursively encrypt and overwrite all html files in a folder
+docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest path/to/folder/* -r -d . -p mylongpassword
 ```
 
 Using nodejs npm:
