@@ -160,6 +160,10 @@ describe("cli arguments", () => {
                 "Need help?",
                 "--template-subtitle-link",
                 "https://example.test/help",
+                "--template-footer",
+                "Built with StatiCrypt",
+                "--template-footer-link",
+                "https://example.test/about",
                 "--template-image",
                 inlineSvgPath,
                 "--template-image-position",
@@ -184,6 +188,8 @@ describe("cli arguments", () => {
         expect(html).toContain("Hide phrase");
         expect(html).toContain('templateSubtitle = "Need help?"');
         expect(html).toContain('templateSubtitleLink = "https://example.test/help"');
+        expect(html).toContain('templateFooter = "Built with StatiCrypt"');
+        expect(html).toContain('templateFooterLink = "https://example.test/about"');
         expect(html).toContain("#123456");
         expect(html).toContain("#654321");
         expect(html).toContain('data-image-position="left"');
@@ -303,6 +309,35 @@ describe("cli arguments", () => {
         );
         const html = fs.readFileSync(path.join(outputDir, "warning.html"), "utf8");
         expect(html).not.toContain(lonelyLink);
+    });
+
+    test("template footer link alone triggers warning and is ignored", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "footer-warning.html");
+        const outputDir = path.join(workspace, "footer-warning-output");
+        const lonelyFooterLink = "https://example.test/footer";
+
+        const result = runStaticrypt(
+            [
+                inputFile,
+                "--directory",
+                outputDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+                "--template-footer-link",
+                lonelyFooterLink,
+            ],
+            { cwd: workspace }
+        );
+
+        expect(result.status).toBe(0);
+        expect(result.stdout).toContain(
+            "WARNING: '--template-footer-link' was provided without '--template-footer'; the link will be ignored."
+        );
+        const html = fs.readFileSync(path.join(outputDir, "footer-warning.html"), "utf8");
+        expect(html).not.toContain(lonelyFooterLink);
     });
 
     test("quiet flag suppresses completion summary", () => {

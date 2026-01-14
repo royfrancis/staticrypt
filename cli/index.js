@@ -180,6 +180,8 @@ async function runStatiCrypt() {
 
     const templateSubtitle = namedArgs.templateSubtitle ?? "";
     let templateSubtitleLink = namedArgs.templateSubtitleLink ?? "";
+    const templateFooter = namedArgs.templateFooter ?? "";
+    let templateFooterLink = namedArgs.templateFooterLink ?? "";
     const templatePageTitle = namedArgs.templatePageTitle || namedArgs.templateTitle;
     const rawTemplateImage = typeof namedArgs.templateImage === "string" ? namedArgs.templateImage.trim() : "";
     const templateImage = resolveTemplateImageSource(rawTemplateImage);
@@ -219,6 +221,14 @@ async function runStatiCrypt() {
         templateSubtitleLink = "";
     }
 
+    const hasFooterText = typeof templateFooter === "string" && templateFooter.trim().length > 0;
+    if (templateFooterLink && !hasFooterText) {
+        console.log(
+            "WARNING: '--template-footer-link' was provided without '--template-footer'; the link will be ignored."
+        );
+        templateFooterLink = "";
+    }
+
     const baseTemplateData = {
         is_remember_enabled: JSON.stringify(isRememberEnabled),
         js_staticrypt: buildStaticryptJS(),
@@ -232,6 +242,8 @@ async function runStatiCrypt() {
         template_page_title: templatePageTitle,
         template_subtitle: templateSubtitle,
         template_subtitle_link: templateSubtitleLink,
+        template_footer: templateFooter,
+        template_footer_link: templateFooterLink,
         template_title: namedArgs.templateTitle,
         template_toggle_show: namedArgs.templateToggleShow,
         template_toggle_hide: namedArgs.templateToggleHide,

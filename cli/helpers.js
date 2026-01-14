@@ -531,6 +531,16 @@ function parseCommandLineArguments() {
                 describe: "URL applied to the subtitle; subtitle stays plain text if unused.",
                 default: null,
             })
+            .option("template-footer", {
+                type: "string",
+                describe: "Optional footer text displayed below the form.",
+                default: null,
+            })
+            .option("template-footer-link", {
+                type: "string",
+                describe: "URL applied to the footer; ignored when footer text is empty.",
+                default: null,
+            })
             .option("template-toggle-hide", {
                 type: "string",
                 describe: 'Alt text for toggling password visibility - "hide" action.',
