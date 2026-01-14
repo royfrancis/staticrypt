@@ -370,6 +370,8 @@ exports.recursivelyApplyCallbackToHtmlFiles = recursivelyApplyCallbackToHtmlFile
 function parseCommandLineArguments() {
     return (
         Yargs.usage("Usage: staticrypt <filename> [<filename> ...] [options]")
+            .help("h")
+            .alias("h", "help")
             .option("c", {
                 alias: "config",
                 type: "string",

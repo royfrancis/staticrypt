@@ -6,6 +6,7 @@ This section details all available command-line flags for the StatiCrypt tool.
 
 | Flag | Alias | Description |
 | --- | --- | --- |
+| `--help` | `-h` | Show the full CLI usage reference. |
 | `--config <path>` | `-c` | Path to config file (default `.staticrypt.json`). Use `false` to skip config IO. |
 | `--directory <dir>` | `-d` | Output directory for encrypted/decrypted files. Defaults to `encrypted` or `decrypted` when `--decrypt` is set. |
 | `--decrypt` | — | Decrypt input files instead of encrypting. |
