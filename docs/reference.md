@@ -31,6 +31,10 @@ This section details all available command-line flags for the StatiCrypt tool.
 | `--template-button <text>` | Label for the decrypt button (default `Login`). |
 | `--template-color-primary <hex>` | Primary accent color (default `#95b540`). |
 | `--template-color-secondary <hex>` | Secondary/background color (default `#E9F2D1`). |
+| `--template-image <path>` | Path/URL of an image shown with the login form; local files are inlined as base64 automatically. |
+| `--template-image-position <top \| left>` | Choose whether the image sits above the card or to the left (default `top`). |
+| `--template-image-height <css>` | Overrides the computed image height (`60px` for top, `100%` for left by default). |
+| `--template-image-width <css>` | Overrides the computed image width (`100%` for top, `120px` for left by default). |
 | `--template-error <text>` | Alert shown when the passphrase is wrong.
 | `--template-instructions <text>` | Paragraph displayed above the password field.
 | `--template-placeholder <text>` | Placeholder text inside the password input.

@@ -131,6 +131,8 @@ staticrypt * -r -d . -p mylongpassword
 
 StatiCrypt supports customizing the password prompt template via flags or a custom HTML file. Below are some common options.
 
+**Button**
+
 Change the button text. Use single quotes to avoid shell issues.
 
 ```bash
@@ -138,6 +140,8 @@ staticrypt index.html -p mylongpassword --template-button 'Gimme the secrets!'
 ```
 
 ![](/images/button-text.webp)
+
+**Colors**
 
 Change primary and secondary colors
 
@@ -147,11 +151,15 @@ staticrypt index.html -p mylongpassword --template-color-primary '#FD7979' --tem
 
 ![](/images/colors.webp)
 
+**Error message**
+
 Change the error message shown on incorrect password
 
 ```bash
 staticrypt index.html -p mylongpassword --template-error 'Bad password! Please try again.'
 ```
+
+**Password placeholder**
 
 ![](/images/bad-password.webp)
 
@@ -163,6 +171,8 @@ staticrypt index.html -p mylongpassword --template-placeholder 'Enter secret her
 
 ![](/images/placeholder.webp)
 
+**Form title**
+
 Set custom title to display on the login form
 
 ```bash
@@ -171,11 +181,15 @@ staticrypt index.html -p mylongpassword --template-title 'Confidential Document'
 
 ![](/images/title.webp)
 
+**Page title**
+
 Set the page title to be different from form title. This changes the text on the browser tab for example.
 
 ```bash
 staticrypt index.html -p mylongpassword --template-page-title 'Confidential Document - Login'
 ```
+
+**Custom instructions**
 
 Provide custom instructions
 
@@ -185,6 +199,8 @@ staticrypt index.html -p mylongpassword --template-instructions 'Please enter th
 
 ![](/images/instructions.webp)
 
+**Subtitle**
+
 Add a subtitle and instructions
 
 ```bash
@@ -192,6 +208,8 @@ staticrypt index.html -p mylongpassword --template-subtitle 'Confidential' --tem
 ```
 
 ![](/images/subtitle-instructions.webp)
+
+**Subtitle link**
 
 Add a link to the subtitle
 
@@ -208,6 +226,44 @@ staticrypt index.html -p mylongpassword --template-subtitle "<svg width='30' hei
 ```
 
 ![](/images/github.webp)
+
+**Hero / Brand Image**
+
+Add a hero or brand image to the login card. `--template-image` accepts a local path or absolute URL. Combine it with `--template-image-position`, `--template-image-height`, and `--template-image-width` to fine-tune the layout. `--template-image-position` can take options 'top' or 'left'. Height and width if not set defaults to (top: 60px × 100%, left: 100% × 120px).
+
+```bash
+# Default image on top
+staticrypt index.html -p mylongpassword --template-image portrait.webp
+```
+
+![](/images/image-top.webp)
+
+```bash
+# Set to left side
+staticrypt index.html -p mylongpassword \
+    --template-image portrait.webp \
+    --template-image-position left
+```
+
+![](/images/image-left.webp)
+
+```bash
+# Using a remote image URL and custom width
+staticrypt index.html -p mylongpassword \
+    --template-image https://images.pexels.com/photos/4716089/pexels-photo-4716089.jpeg \
+    --template-image-position left \
+    --template-image-width 200px
+```
+
+![](/images/image-url.webp)
+
+The image element is constrained with `object-fit: cover`, so it fully fills the allocated box without distorting the original aspect ratio.
+
+::: warning
+
+Local images are encoded into the HTML file during export, so use images with small file sizes to avoid bloating the final HTML size.
+
+:::
 
 ### Remember Me
 

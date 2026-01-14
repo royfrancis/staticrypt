@@ -8,6 +8,10 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   themeConfig: {
+    outline: {
+      level: [2, 3],
+      label: "On this page",
+    },
     nav: [
       { text: "Home", link: "/" },
       { text: "Usage", link: "/guide" },
