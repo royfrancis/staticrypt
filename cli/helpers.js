@@ -33,7 +33,7 @@ exports.exitWithError = exitWithError;
  */
 function isOptionSetByUser(option, yargs) {
     function searchForOption(option) {
-        return process.argv.indexOf(option) > -1;
+        return process.argv.some((arg) => arg === option || arg.startsWith(`${option}=`));
     }
 
     if (searchForOption(`-${option}`) || searchForOption(`--${option}`)) {
@@ -190,7 +190,7 @@ function getSalt(namedArgs, config) {
 
     // or try to read the salt from config file
     if (config.salt) {
-        return config.salt;
+        return String(config.salt).toLowerCase();
     }
 
     return generateRandomSalt();
@@ -295,7 +295,7 @@ function copyFile(inputFilePath, outputFilePath) {
         fs.copyFileSync(inputFilePath, outputFilePath, fs.constants.COPYFILE_FICLONE);
     } catch (e) {
         console.error(e);
-        exitWithError(`could not write file at path "${filePath}"`);
+        exitWithError(`could not write file at path "${outputFilePath}"`);
     }
 }
 
@@ -453,7 +453,7 @@ function parseCommandLineArguments() {
             })
             .option("template-button", {
                 type: "string",
-                describe: 'Label to use for the decrypt button. Default: "DECRYPT".',
+                describe: 'Label to use for the decrypt button. Default: "Login".',
                 default: "Login",
             })
             .option("template-color-primary", {
