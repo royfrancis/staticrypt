@@ -11,7 +11,6 @@ RUN npm ci --omit=dev
 
 COPY cli/ cli/
 COPY lib/ lib/
-COPY scripts/ scripts/
 
 FROM ${NODE_BASE}
 RUN apk add --no-cache bash && apk upgrade --no-cache
@@ -20,5 +19,7 @@ COPY --from=builder /home/staticrypt .
 RUN chmod +x cli/index.js && ln -s /opt/staticrypt/cli/index.js /usr/local/bin/staticrypt
 
 WORKDIR /home/work
+RUN chown node:node /home/work
+USER node
 ENTRYPOINT ["staticrypt"]
 CMD ["--version"]
