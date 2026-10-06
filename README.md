@@ -12,13 +12,13 @@ Using docker:
 
 ```bash
 # exports to a directory named 'encrypted' inside the current directory
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -p mylongpassword
+docker run --rm --user $(id -u):$(id -g) -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -p mylongpassword
 
 # to overwrite the original file
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -d . -p mylongpassword
+docker run --rm --user $(id -u):$(id -g) -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest index.html -d . -p mylongpassword
 
 # recursively encrypt and overwrite all html files in a folder
-docker run --rm -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest path/to/folder/* -r -d . -p mylongpassword
+docker run --rm --user $(id -u):$(id -g) -v $PWD:/home/work ghcr.io/royfrancis/staticrypt:latest path/to/folder/* -r -d . -p mylongpassword
 ```
 
 Using nodejs npm:

@@ -29,6 +29,7 @@ jobs:
           IMAGE: staticrypt:3.5.6
         run: |
           docker run --rm \
+            --user $(id -u):$(id -g) \
             -v ${{ github.workspace }}:/home/work \
             ${{ env.REGISTRY }}/${{ env.ORG }}/${{ env.IMAGE }} \
             docs/public/example.html \
