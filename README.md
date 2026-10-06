@@ -42,6 +42,11 @@ staticrypt index.html -d . -p mylongpassword
 staticrypt path/to/folder/* -d path/to/folder -r -p mylongpassword
 ```
 
+Using Github Actions:
+
+- Example workflow to encrypt HTML files: [royfrancis/staticrypt-ga](https://github.com/royfrancis/staticrypt-ga)
+- Example workflow to encrypt HTML files in a Quarto project: [royfrancis/staticrypt-quarto-ga](https://github.com/royfrancis/staticrypt-quarto-ga)
+
 ## Updating
 
 - `npm install -g` to update the global package
