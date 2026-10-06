@@ -133,36 +133,46 @@ async function runStatiCrypt() {
         const outputDirectory = isOutputDirectoryDefault ? "decrypted" : namedArgs.directory;
         const decryptTasks = [];
         let decryptedFileCount = 0;
+        let failedFileCount = 0;
         let decryptedOverwroteInputs = false;
 
         positionalArguments.forEach((path) => {
             recursivelyApplyCallbackToHtmlFiles(
                 (fullPath, fullRootDirectory) => {
-                    decryptedFileCount += 1;
                     const task = decodeAndGenerateFile(fullPath, fullRootDirectory, hashedPassword, outputDirectory).then(
                         (result) => {
-                            if (result?.overwroteSource) {
-                                decryptedOverwroteInputs = true;
+                            if (result?.success) {
+                                decryptedFileCount += 1;
+                                if (result.overwroteSource) {
+                                    decryptedOverwroteInputs = true;
+                                }
+                            } else {
+                                failedFileCount += 1;
                             }
                         }
                     );
                     decryptTasks.push(task);
                 },
                 path,
-                namedArgs.directory
+                outputDirectory
             );
         });
 
         await Promise.all(decryptTasks);
 
+        if (failedFileCount > 0) {
+            process.exitCode = 1;
+        }
+
         if (!namedArgs.quiet) {
             const resolvedOutputDir = pathModule.resolve(process.cwd(), outputDirectory);
-            const finalOutputDir = fs.realpathSync(resolvedOutputDir);
+            const finalOutputDir = fs.existsSync(resolvedOutputDir) ? fs.realpathSync(resolvedOutputDir) : resolvedOutputDir;
             const fileLabel = decryptedFileCount === 1 ? "file" : "files";
             const destinationLabel = decryptedOverwroteInputs
                 ? `in-place (overwriting originals) at ${finalOutputDir}`
                 : `to ${finalOutputDir}`;
-            console.log(`Decrypted ${decryptedFileCount} ${fileLabel} ${destinationLabel}`);
+            const failureSuffix = failedFileCount > 0 ? `, ${failedFileCount} failed` : "";
+            console.log(`Decrypted ${decryptedFileCount} ${fileLabel} ${destinationLabel}${failureSuffix}`);
         }
 
         return;
@@ -232,6 +242,8 @@ async function runStatiCrypt() {
     const baseTemplateData = {
         is_remember_enabled: JSON.stringify(isRememberEnabled),
         js_staticrypt: buildStaticryptJS(),
+        // kept for backward compatibility with pre-existing custom templates (-t/--template) that may still
+        // reference these placeholder names directly - do not remove or repoint these.
         template_button: namedArgs.templateButton,
         template_color_primary: namedArgs.templateColorPrimary,
         template_color_secondary: namedArgs.templateColorSecondary,
@@ -253,6 +265,28 @@ async function runStatiCrypt() {
         template_image_width: templateImageWidth,
         template_image_cover_position: templateImageFocus,
         template_image_is_present: templateImageIsPresent,
+
+        // safe placeholders used by the bundled password_template.html only (see cli/helpers.js escapeHtml):
+        // HTML-escaped versions for plain-text attribute/text contexts (these never carry embedded HTML)
+        template_title_html: escapeHtml(namedArgs.templateTitle),
+        template_page_title_html: escapeHtml(templatePageTitle),
+        template_placeholder_html: escapeHtml(namedArgs.templatePlaceholder),
+        template_button_html: escapeHtml(namedArgs.templateButton),
+        template_remember_html: escapeHtml(namedArgs.templateRemember),
+        template_toggle_show_html: escapeHtml(namedArgs.templateToggleShow),
+        template_toggle_hide_html: escapeHtml(namedArgs.templateToggleHide),
+        // raw values bundled as JSON for safe embedding inside the inline <script> (these intentionally may
+        // carry embedded HTML for subtitle/footer/instructions, rendered via innerHTML at runtime)
+        template_strings: {
+            error: namedArgs.templateError,
+            toggleAltShow: namedArgs.templateToggleShow,
+            toggleAltHide: namedArgs.templateToggleHide,
+            subtitle: templateSubtitle,
+            subtitleLink: templateSubtitleLink,
+            instructions: namedArgs.templateInstructions,
+            footer: templateFooter,
+            footerLink: templateFooterLink,
+        },
     };
 
     // encode all the files
@@ -305,14 +339,16 @@ async function decodeAndGenerateFile(path, fullRootDirectory, hashedPassword, ou
     const saltMatch = encryptedFileContent.match(/"staticryptSaltUniqueVariableName":\s*"([^"]+)"/);
 
     if (!cipherTextMatch || !saltMatch) {
-        return console.log(`ERROR: could not extract cipher text or salt from ${path}`);
+        console.log(`ERROR: could not extract cipher text or salt from ${path}`);
+        return { success: false };
     }
 
     // decrypt input
     const { success, decoded } = await decode(cipherTextMatch[1], hashedPassword, saltMatch[1]);
 
     if (!success) {
-        return console.log(`ERROR: could not decrypt ${path}`);
+        console.log(`ERROR: could not decrypt ${path}`);
+        return { success: false };
     }
 
     const outputFilepath = getFullOutputPath(path, fullRootDirectory, outputDirectory);
@@ -321,7 +357,7 @@ async function decodeAndGenerateFile(path, fullRootDirectory, hashedPassword, ou
 
     const resolvedOutputFilepath = fs.realpathSync(outputFilepath);
     const resolvedSourcePath = fs.realpathSync(path);
-    return { overwroteSource: resolvedOutputFilepath === resolvedSourcePath };
+    return { success: true, overwroteSource: resolvedOutputFilepath === resolvedSourcePath };
 }
 
 async function encodeAndGenerateFile(
@@ -365,6 +401,21 @@ async function encodeAndGenerateFile(
 }
 
 runStatiCrypt();
+
+/**
+ * Escape a string for safe embedding in plain HTML text/attribute context (not a context that should carry
+ * embedded HTML, e.g. title/placeholder/button labels).
+ *
+ * @param {*} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+    if (typeof value !== "string") {
+        return value;
+    }
+
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
 
 function resolveTemplateImageSource(imageInput) {
     if (!imageInput) {
