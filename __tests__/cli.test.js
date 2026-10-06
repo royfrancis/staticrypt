@@ -186,10 +186,12 @@ describe("cli arguments", () => {
         expect(html).toContain("Passphrase please");
         expect(html).toContain("Show phrase");
         expect(html).toContain("Hide phrase");
-        expect(html).toContain('templateSubtitle = "Need help?"');
-        expect(html).toContain('templateSubtitleLink = "https://example.test/help"');
-        expect(html).toContain('templateFooter = "Built with StatiCrypt"');
-        expect(html).toContain('templateFooterLink = "https://example.test/about"');
+        // these are now embedded as JSON inside `template_strings` (safely escaped via JSON.stringify), not as
+        // individually-quoted JS string literals
+        expect(html).toContain('"subtitle":"Need help?"');
+        expect(html).toContain('"subtitleLink":"https://example.test/help"');
+        expect(html).toContain('"footer":"Built with StatiCrypt"');
+        expect(html).toContain('"footerLink":"https://example.test/about"');
         expect(html).toContain("#123456");
         expect(html).toContain("#654321");
         expect(html).toContain('data-image-position="left"');
@@ -473,6 +475,126 @@ describe("cli arguments", () => {
         expect(decryptResult.stdout).toContain(`Decrypted 1 file to ${expectedSummaryPath}`);
         const decryptedFilePath = path.join(decryptedDir, "source.html");
         expect(fs.readFileSync(decryptedFilePath, "utf8")).toBe(originalHtml);
+    });
+
+    test("decrypt with the wrong password reports failure and exits non-zero", () => {
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "source.html", "<html>Restore me</html>");
+        const encryptedDir = path.join(workspace, "enc");
+        const decryptedDir = path.join(workspace, "dec");
+
+        const encryptResult = runStaticrypt(
+            [inputFile, "--directory", encryptedDir, "--config", "false", "--salt", TEST_SALT],
+            { cwd: workspace }
+        );
+        expect(encryptResult.status).toBe(0);
+        const encryptedFilePath = path.join(encryptedDir, "source.html");
+
+        const decryptResult = runStaticrypt(
+            [
+                encryptedFilePath,
+                "--decrypt",
+                "--directory",
+                decryptedDir,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+            ],
+            { cwd: workspace, env: { STATICRYPT_PASSWORD: "definitelyTheWrongPassword!" } }
+        );
+
+        expect(decryptResult.status).not.toBe(0);
+        expect(decryptResult.stdout).toContain("ERROR: could not decrypt");
+        expect(decryptResult.stdout).toContain("Decrypted 0 file");
+        expect(decryptResult.stdout).toContain("1 failed");
+        expect(fs.existsSync(path.join(decryptedDir, "source.html"))).toBe(false);
+    });
+
+    test("recursive decrypt writes decrypted HTML and copied assets to the same output directory", () => {
+        const workspace = makeTempDir();
+        const inputRoot = path.join(workspace, "input");
+        fs.mkdirSync(inputRoot, { recursive: true });
+        writeSampleHtml(inputRoot, "index.html", "<html>Root</html>");
+        fs.writeFileSync(path.join(inputRoot, "notes.txt"), "plain asset", "utf8");
+
+        const encryptedDir = path.join(workspace, "encrypted-out");
+        const encryptResult = runStaticrypt(
+            [inputRoot, "--recursive", "--directory", encryptedDir, "--config", "false", "--salt", TEST_SALT],
+            { cwd: workspace }
+        );
+        expect(encryptResult.status).toBe(0);
+
+        // decrypt without an explicit --directory, so the default output directory changes from
+        // "encrypted" to "decrypted" - both the decrypted HTML and the copied asset must land under that same
+        // tree (not split across "decrypted" and "encrypted" like before the fix)
+        const decryptResult = runStaticrypt(
+            [encryptedDir, "--decrypt", "--recursive", "--config", "false", "--salt", TEST_SALT],
+            { cwd: workspace }
+        );
+        expect(decryptResult.status).toBe(0);
+
+        const decryptedDir = path.join(workspace, "decrypted");
+        expect(fs.existsSync(decryptedDir)).toBe(true);
+
+        const decryptedFiles = [];
+        const walk = (dir) => {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                const fullPath = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                    walk(fullPath);
+                } else {
+                    decryptedFiles.push(fullPath);
+                }
+            }
+        };
+        walk(decryptedDir);
+
+        const htmlFile = decryptedFiles.find((filePath) => filePath.endsWith("index.html"));
+        const assetFile = decryptedFiles.find((filePath) => filePath.endsWith("notes.txt"));
+
+        expect(htmlFile).toBeDefined();
+        expect(assetFile).toBeDefined();
+        expect(fs.readFileSync(htmlFile, "utf8")).toBe("<html>Root</html>");
+        expect(fs.readFileSync(assetFile, "utf8")).toBe("plain asset");
+    });
+
+    test("equals-form flags (--flag=value) are honored", () => {
+        const shareResult = runStaticrypt([
+            `--share=https://example.test/secret`,
+            "--salt",
+            TEST_SALT,
+            "--config",
+            "false",
+        ]);
+        expect(shareResult.status).toBe(0);
+        expect(shareResult.stdout.trim()).toMatch(/^https:\/\/example\.test\/secret#staticrypt_pwd=[0-9a-f]+$/);
+
+        const workspace = makeTempDir();
+        const inputFile = writeSampleHtml(workspace, "source.html", "<html>Restore me</html>");
+        const encryptedDir = path.join(workspace, "enc");
+        const customDecryptedDir = path.join(workspace, "custom-decrypted");
+
+        const encryptResult = runStaticrypt(
+            [inputFile, "--directory", encryptedDir, "--config", "false", "--salt", TEST_SALT],
+            { cwd: workspace }
+        );
+        expect(encryptResult.status).toBe(0);
+
+        const decryptResult = runStaticrypt(
+            [
+                path.join(encryptedDir, "source.html"),
+                "--decrypt",
+                `--directory=${customDecryptedDir}`,
+                "--config",
+                "false",
+                "--salt",
+                TEST_SALT,
+            ],
+            { cwd: workspace }
+        );
+        expect(decryptResult.status).toBe(0);
+        expect(fs.readFileSync(path.join(customDecryptedDir, "source.html"), "utf8")).toBe("<html>Restore me</html>");
     });
 
     test("missing input path surfaces a helpful error", () => {

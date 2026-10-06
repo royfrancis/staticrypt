@@ -1,5 +1,6 @@
 const cryptoEngine = require("../lib/cryptoEngine.js");
 const codec = require("../lib/codec.js").init(cryptoEngine);
+const { renderTemplate } = require("../lib/formater.js");
 
 const TEST_PASSWORD = "thisIsAVeryLongTestPassword!";
 const TEST_SALT = "b93bbaf35459951c47721d1f3eaeb5b9";
@@ -74,8 +75,9 @@ describe("codec.encode / decode", () => {
         const encoded = await codec.encode(TEST_MESSAGE, TEST_PASSWORD, TEST_SALT);
         const hashedPassword = await cryptoEngine.hashPassword(TEST_PASSWORD, TEST_SALT);
 
-        // flip one hex character well past the 64-char HMAC prefix, inside the ciphertext body
-        const tamperIndex = 70;
+        // flip one hex character well past the 64-char HMAC prefix and the 32-char IV (indices 64-95), inside the
+        // actual ciphertext body
+        const tamperIndex = 100;
         const originalChar = encoded[tamperIndex];
         const replacementChar = originalChar === "0" ? "1" : "0";
         const tampered =
@@ -124,5 +126,30 @@ describe("codec.encode / decode", () => {
 
         expect(result.success).toBe(true);
         expect(result.decoded).toBe(TEST_MESSAGE);
+    });
+});
+
+describe("formater.renderTemplate object embedding", () => {
+    it("safely embeds string values containing double quotes inside a JS string literal context", () => {
+        // this mirrors how password_template.html embeds `template_strings` as
+        // `const templateStrings = /*[|template_strings|]*/0;` - the object gets JSON.stringify'd, which must
+        // produce a value that's still valid when parsed back as JS (quotes inside the values must not break out
+        // of the generated object literal)
+        const templateStrings = {
+            error: 'Say "hi" and <script>alert(1)</script>',
+            toggleAltShow: "Show it",
+        };
+
+        const rendered = renderTemplate("const templateStrings = /*[|template_strings|]*/0;", {
+            template_strings: templateStrings,
+        });
+
+        // must be parseable as valid JS (would throw a SyntaxError before the fix, when individual quoted
+        // literals were used instead of a JSON-embedded object)
+        expect(() => new Function(rendered)).not.toThrow();
+
+        // and must round-trip back to the original values
+        const templateStringsMatch = rendered.match(/const templateStrings = (.*);/);
+        expect(JSON.parse(templateStringsMatch[1])).toEqual(templateStrings);
     });
 });
