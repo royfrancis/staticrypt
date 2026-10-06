@@ -1,8 +1,7 @@
 {
     "name": "staticrypt",
-    "version": "3.5.5",
-    "description": "Password protect a static HTML file without a backend - StatiCrypt uses AES-256 wiht WebCrypto to encrypt your input with your long password and put it in a HTML file with a password prompt that can decrypted in-browser (client side).",
-    "main": "index.js",
+    "version": "3.5.6",
+    "description": "Password protect a static HTML file without a backend - StatiCrypt uses AES-256 with WebCrypto to encrypt your input with your long password and put it in a HTML file with a password prompt that can decrypted in-browser (client side).",
     "files": [
         "/cli",
         "/lib"
@@ -29,21 +28,15 @@
     ],
     "license": "MIT",
     "scripts": {
-        "build": "bash ./scripts/build.sh",
         "format": "prettier --write \"**/*.{js,json,html}\"",
         "test": "jest",
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs",
         "docs:preview": "vitepress preview docs"
     },
-    "lint-staged": {
-        "**/*.{js,json,html}": [
-            "prettier --write"
-        ]
-    },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/robinmoisson/staticrypt.git"
+        "url": "git+https://github.com/royfrancis/staticrypt.git"
     },
     "keywords": [
         "static",
@@ -56,12 +49,11 @@
         "webcrypto"
     ],
     "bugs": {
-        "url": "https://github.com/robinmoisson/staticrypt/issues"
+        "url": "https://github.com/royfrancis/staticrypt/issues"
     },
-    "homepage": "https://github.com/robinmoisson/staticrypt",
+    "homepage": "https://github.com/royfrancis/staticrypt",
     "devDependencies": {
         "jest": "^29.7.0",
-        "lint-staged": "^15.2.10",
         "prettier": "^2.8.8",
         "vitepress": "^1.6.4"
     }
