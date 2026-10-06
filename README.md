@@ -1,6 +1,6 @@
 # :lock: StatiCrypt 
 
-[![docs build status](https://github.com/royfrancis/staticrypt/workflows/docs/badge.svg)](https://github.com/royfrancis/staticrypt/actions?workflow=docs) [![ghcr build status](https://github.com/royfrancis/staticrypt/actions/workflows/ghcr.yml/badge.svg)](https://github.com/royfrancis/staticrypt/pkgs/container/staticrypt) [![dockerhub build status](https://github.com/royfrancis/staticrypt/actions/workflows/dockerhub.yml/badge.svg)](https://hub.docker.com/repository/docker/royfrancis/staticrypt)
+[![docs build status](https://github.com/royfrancis/staticrypt/workflows/docs/badge.svg)](https://github.com/royfrancis/staticrypt/actions?workflow=docs) [![ghcr build status](https://github.com/royfrancis/staticrypt/actions/workflows/ghcr.yml/badge.svg)](https://github.com/royfrancis/staticrypt/pkgs/container/staticrypt) [![dockerhub build status](https://github.com/royfrancis/staticrypt/actions/workflows/dockerhub.yml/badge.svg)](https://hub.docker.com/r/royfrancis/staticrypt)
 
 ![preview](docs/public/images/preview.webp)
 

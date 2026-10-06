@@ -324,7 +324,7 @@ staticrypt encrypted/index.html --decrypt -p "mylongpassword"
 
 ## Configuration File
 
-Running StatiCrypt writes `.staticrypt.json` containing the last salt and other metadata. Check this file into version control when collaborating to ensure everyone uses the same salt.
+Running StatiCrypt writes `.staticrypt.json` containing the last salt. Check this file into version control when collaborating to ensure everyone uses the same salt.
 
 Example:
 

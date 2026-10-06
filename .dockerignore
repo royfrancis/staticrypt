@@ -19,8 +19,6 @@ docs/.vitepress/dist
 # Documentation & examples
 docs
 example
-preview.webp
-preview-repo.webp
 *.md
 
 # Tests & tooling

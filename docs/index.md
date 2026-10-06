@@ -7,7 +7,7 @@ hero:
     actions:
         - theme: brand
           text: Get Started
-          link: /usage
+          link: /guide
         - theme: alt
           text: View on GitHub
           link: https://github.com/royfrancis/staticrypt
