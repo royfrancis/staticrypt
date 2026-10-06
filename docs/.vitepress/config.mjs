@@ -16,6 +16,7 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Usage", link: "/guide" },
       { text: "Reference", link: "/reference" },
+      { text: "Versions", link: "/versions" },
     ],
     sidebar: {
       "/": [
@@ -25,6 +26,7 @@ export default defineConfig({
             { text: "Home", link: "/" },
             { text: "Usage", link: "/guide" },
             { text: "Reference", link: "/reference" },
+            { text: "Versions", link: "/versions" },
           ],
         },
       ],
